@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>App</title>
+<style>
+html,body{margin:0;padding:0}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#0a0a0a;color:#e8e8e8;min-height:100vh;display:flex;justify-content:center;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* === QUALIFIER === */
+#_qv{position:fixed;inset:0;z-index:9000;background:#0a0a0a;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .25s ease}
+#_qv.out{opacity:0;pointer-events:none}
+._qc{max-width:380px;width:100%;animation:_a .4s ease}
+._qh{font-size:26px;font-weight:800;letter-spacing:-.5px;text-align:center;margin-bottom:8px;line-height:1.2}
+._qh i{font-style:normal;color:#0ee6b7}
+._qs{font-size:13px;color:#6b6b6b;text-align:center;margin-bottom:28px;line-height:1.5}
+._ql{font-size:14px;font-weight:700;color:#e8e8e8;margin-bottom:14px;text-align:center}
+._qg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+._qo{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s ease;-webkit-tap-highlight-color:transparent}
+._qo:active{transform:scale(.95)}
+._qo span{font-size:28px}
+._qo em{font-style:normal;font-size:13px;font-weight:600;color:#b0b0b0}
+._qo.picked{border-color:#0ee6b7;background:rgba(14,230,183,.1)}
+._qo.picked em{color:#0ee6b7}
+._qf{text-align:center;margin-top:20px;font-size:10px;color:#444}
+
+/* === LANDER === */
+#_lander{display:none}
+#_lander.on{display:flex}
+[data-view]{width:100%;max-width:440px;padding:32px 20px 48px}
+[data-panel]{display:flex;flex-direction:column;animation:_a .35s ease}
+@keyframes _a{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+._h{font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+._h i{font-style:normal;color:#0ee6b7}
+._p{font-size:14px;line-height:1.55;color:#6b6b6b;margin-bottom:24px}
+._rv{margin-bottom:24px}
+._rh{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px}
+._ri{display:flex;gap:11px;padding:12px 0;border-top:1px solid rgba(255,255,255,.06)}
+._ra{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0a0a0a}
+._rb{flex:1}
+._rt{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+._rn{font-size:12px;font-weight:700}
+._rd{font-size:10px;color:#6b6b6b}
+._rs{font-size:10px;color:#fbbf24}
+._rx{font-size:12px;color:#999;line-height:1.45}
+._btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#0ee6b7;color:#0a0a0a;font-size:16px;font-weight:800;letter-spacing:.5px;text-decoration:none;padding:20px;border-radius:12px;transition:all .15s ease;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:_pulse 2s ease-in-out infinite}
+._btn svg{width:22px;height:22px;fill:#0a0a0a;flex-shrink:0}
+._btn:active{transform:scale(.97);opacity:.9;animation:none}
+@keyframes _pulse{0%,100%{box-shadow:0 0 0 0 rgba(14,230,183,.4)}50%{box-shadow:0 0 0 10px rgba(14,230,183,0)}}
+._bs{text-align:center;margin-top:8px;font-size:11px;color:#555}
+._bs b{color:#0ee6b7;font-weight:700}
+._st{margin-top:24px}
+._si{display:flex;gap:16px;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)}
+._sn{font-size:14px;color:#0ee6b7;font-weight:800;flex-shrink:0;width:24px;font-variant-numeric:tabular-nums}
+._sx{font-size:14px;font-weight:700;margin-bottom:3px}
+._sd{font-size:12px;color:#6b6b6b;line-height:1.5}
+._age{display:flex;align-items:center;gap:8px;margin-top:24px;padding:12px 14px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:8px}
+._age b{font-size:15px;flex-shrink:0}
+._age span{font-size:12px;color:#d4a017;font-weight:600}
+
+/* === SOCIAL PROOF TOAST === */
+._pf{position:fixed;top:12px;left:50%;transform:translateX(-50%) translateY(-80px);max-width:340px;width:calc(100% - 40px);background:#141414;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px;z-index:100;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .35s;opacity:0;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+._pf.show{transform:translateX(-50%) translateY(0);opacity:1}
+._pa{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0a0a0a}
+._pb{flex:1}
+._pn{font-size:11px;font-weight:700;margin-bottom:1px}
+._pm{font-size:10px;color:#6b6b6b}
+._pm b{color:#0ee6b7;font-weight:700}
+._pt{font-size:9px;color:#555;flex-shrink:0}
+@media(max-width:380px){._h{font-size:26px}._qh{font-size:22px}}
+</style>
+</head>
+<body>
+
+<!-- ===== QUALIFIER ===== -->
+<div id="_qv">
+<div class="_qc">
+<div class="_qh">Verdiene Geld beim <i>Scrollen!</i></div>
+<div class="_qs">Wähle aus, wie du am liebsten verdienen möchtest — wir passen die App für dich an.</div>
+<div class="_ql">Wie möchtest du verdienen?</div>
+<div class="_qg">
+<div class="_qo" data-q="apps"><span>📱</span><em>Apps laden</em></div>
+<div class="_qo" data-q="games"><span>🎮</span><em>Spiele spielen</em></div>
+<div class="_qo" data-q="videos"><span>📺</span><em>Videos schauen</em></div>
+<div class="_qo" data-q="surveys"><span>💰</span><em>Umfragen</em></div>
+</div>
+<div class="_qf">100% kostenlos · Keine Anmeldung nötig</div>
+</div>
+</div>
+
+<!-- ===== SOCIAL PROOF TOAST ===== -->
+<div class="_pf" id="_pf">
+<div class="_pa" id="_pa">L</div>
+<div class="_pb"><div class="_pn" id="_pn">Lena aus Berlin</div><div class="_pm" id="_pm">Hat <b>14,50€</b> erhalten</div></div>
+<div class="_pt" id="_pt">2 Min</div>
+</div>
+
+<!-- ===== LANDER ===== -->
+<div id="_lander">
+<div data-view>
+<div data-panel="main">
+
+<h1 class="_h">Verdiene Geld beim <i>Scrollen!</i></h1>
+<p class="_p">Lade die kostenlose App herunter und werde sofort für einfache Aufgaben bezahlt.</p>
+
+<!-- Reviews above CTA -->
+<div class="_rv">
+<div class="_rh">Das sagen Nutzer</div>
+<div class="_ri">
+<div class="_ra" style="background:#6366f1">L</div>
+<div class="_rb">
+<div class="_rt"><span class="_rn">Lena M.</span><span class="_rs">★★★★★</span><span class="_rd">vor 3 Tagen</span></div>
+<div class="_rx">Hab die App gestern Abend geladen und heute schon 11€ auf PayPal bekommen. Musste einfach nur 2 Apps installieren, das wars.</div>
+</div>
+</div>
+<div class="_ri">
+<div class="_ra" style="background:#f59e0b">J</div>
+<div class="_rb">
+<div class="_rt"><span class="_rn">Jonas K.</span><span class="_rs">★★★★★</span><span class="_rd">vor 5 Tagen</span></div>
+<div class="_rx">Ein Kumpel hats mir gezeigt, dachte erst das ist Fake. Jetzt mach ich das jeden Tag nebenbei — letzte Woche 38€ ausgezahlt bekommen.</div>
+</div>
+</div>
+</div>
+
+<!-- Steps -->
+<div class="_st">
+<div class="_rh">So einfach geht's</div>
+<div class="_si"><span class="_sn">01</span><div><div class="_sx">App laden & Konto erstellen</div><div class="_sd">Kostenlos in unter 30 Sekunden. Kein Abo, keine Kreditkarte.</div></div></div>
+<div class="_si"><span class="_sn">02</span><div><div class="_sx">Scrolle durch Inhalte</div><div class="_sd">Lade Apps herunter, spiele Spiele, schaue Videos und erledige einfache Aufgaben — für alles wirst du bezahlt.</div></div></div>
+<div class="_si"><span class="_sn">03</span><div><div class="_sx">Sofort auszahlen lassen</div><div class="_sd">PayPal, Crypto oder Gutscheine — die meisten Nutzer bekommen ihr Geld innerhalb von Minuten.</div></div></div>
+</div>
+
+<!-- CTA -->
+<a id="go" href="https://linkthem.net/aff_c?offer_id=3819&aff_id=9155&source=sysyheu" class="_btn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Kostenlos herunterladen</a>
+<div class="_bs"><b>14.823</b> Downloads diese Woche · 100% kostenlos</div>
+
+<!-- Age warning -->
+<div class="_age"><b>⚠️</b><span>Gib bei der Registrierung ein Alter von 21+ an, sonst werden Auszahlungen abgelehnt.</span></div>
+
+</div>
+</div>
+</div>
+
+<script>
+(function(){
+var w=window,d=document;
+
+// === QUALIFIER ===
+var qv=d.getElementById('_qv'),lander=d.getElementById('_lander');
+d.querySelectorAll('._qo').forEach(function(qo){
+qo.addEventListener('click',function(){
+d.querySelectorAll('._qo').forEach(function(o){o.classList.remove('picked')});
+qo.classList.add('picked');
+if(w.ttq)w.ttq.track('ClickButton',{content_type:'qualifier',content_id:'q-'+qo.getAttribute('data-q'),value:0.1,currency:'EUR'});
+setTimeout(function(){
+qv.classList.add('out');
+setTimeout(function(){
+qv.style.display='none';
+lander.classList.add('on');
+w.scrollTo(0,0);
+},250);
+},200);
+});
+});
+
+// === SOCIAL PROOF ===
+var pf=d.getElementById('_pf'),pa=d.getElementById('_pa'),pn=d.getElementById('_pn'),pm=d.getElementById('_pm'),pt=d.getElementById('_pt');
+var ps=[
+{n:'Lena aus Berlin',a:'L',c:'#ec4899',v:'14,50€',m:'PayPal',t:'2 Min'},
+{n:'Jonas aus München',a:'J',c:'#f59e0b',v:'23,00€',m:'Crypto',t:'4 Min'},
+{n:'Sophie aus Hamburg',a:'S',c:'#6366f1',v:'8,75€',m:'Gutschein',t:'5 Min'},
+{n:'Finn aus Köln',a:'F',c:'#14b8a6',v:'31,20€',m:'PayPal',t:'7 Min'},
+{n:'Marie aus Frankfurt',a:'M',c:'#f43f5e',v:'12,00€',m:'Überweisung',t:'8 Min'},
+{n:'Leon aus Stuttgart',a:'L',c:'#8b5cf6',v:'19,90€',m:'Crypto',t:'11 Min'},
+{n:'Anna aus Düsseldorf',a:'A',c:'#06b6d4',v:'27,50€',m:'PayPal',t:'13 Min'},
+{n:'Tim aus Leipzig',a:'T',c:'#f97316',v:'16,30€',m:'Gutschein',t:'15 Min'}
+];
+var pi=0;
+function sp(){
+var p=ps[pi%ps.length];
+pa.textContent=p.a;pa.style.background=p.c;
+pn.textContent=p.n;
+pm.innerHTML='Hat <b>'+p.v+'</b> erhalten via '+p.m;
+pt.textContent=p.t;
+pf.classList.add('show');
+setTimeout(function(){pf.classList.remove('show')},3500);
+pi++;
+}
+setTimeout(function(){sp();(function lp(){setTimeout(function(){sp();lp()},11000+Math.random()*5000)})()},4000);
+
+// === TIKTOK PIXEL ===
+var qs=new URLSearchParams(location.search),sid=qs.get('subID')||'';
+var k='ttq';
+w.TiktokAnalyticsObject=k;
+var q=w[k]=w[k]||[];
+q.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];
+q.setAndDefer=function(a,b){a[b]=function(){a.push([b].concat([].slice.call(arguments)))}};
+for(var j=0;j<q.methods.length;j++)q.setAndDefer(q,q.methods[j]);
+q.instance=function(a){for(var b=q._i[a]||[],c=0;c<q.methods.length;c++)q.setAndDefer(b,q.methods[c]);return b};
+q.load=function(a,b){var r='https://analytics.tiktok.com/i18n/pixel/events.js';q._i=q._i||{};q._i[a]=[];q._i[a]._u=r;q._t=q._t||{};q._t[a]=+new Date;q._o=q._o||{};q._o[a]=b||{};var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src=r+'?sdkid='+a+'&lib='+k;var f=d.getElementsByTagName('script')[0];f.parentNode.insertBefore(s,f)};
+q.load('D79U2TRC77UEG1PVB2S0');
+q.page();
+q.identify();
+q.track('ViewContent',{content_type:'product',content_id:'app-lander',value:0,currency:'EUR'});
+
+// === CTA HANDLER ===
+function init(){
+var a=d.getElementById('go');
+if(!a)return;
+if(sid){try{var u=new URL(a.href);u.searchParams.set('sub1',sid);a.href=u.toString()}catch(e){}}
+a.addEventListener('click',function(ev){
+ev.preventDefault();
+var dest=a.href;
+if(w[k]){
+[
+{e:'Download',d:{content_type:'app',content_id:'app-download',value:1,currency:'EUR'}},
+{e:'CompleteRegistration',d:{content_type:'app',content_id:'app-signup',value:1,currency:'EUR'}},
+{e:'AddToCart',d:{content_type:'product',content_id:'app-install',value:0.5,currency:'EUR'}},
+{e:'SubmitForm',d:{content_type:'lead',content_id:'app-lead',value:0.5,currency:'EUR'}}
+].forEach(function(p){w[k].track(p.e,p.d)});
+}
+setTimeout(function(){location.href=dest},350);
+});
+}
+if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+</body>
+</html>
